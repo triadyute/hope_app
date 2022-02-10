@@ -1,118 +1,84 @@
-import React from 'react';
-import { View, ScrollView, Pressable, Linking, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  ScrollView,
+  Text,
+  Image,
+  ActivityIndicator,
+  Modal,
+  Linking,
+  Pressable,
+  StyleSheet,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import customStyles from '../styles/Styles';
 import CustomText from '../custom-components/CustomText';
+import { ListItem } from '../custom-components/ListItem';
 import { Header } from '../custom-components/Header';
 import { Footer } from '../custom-components/Footer';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Emergency } from '../custom-components/Emergency';
+import { CustomButton } from '../custom-components/CustomButton';
+import markdownFonts from '../custom-components/markDownFonts';
+import Markdown from 'react-native-markdown-text';
+import apiRoutes from '../../api/routes';
 
 export const NationalHotlines = ({ navigation }) => {
+  const [howCanIHelp, setHowCanIHelp] = useState([]);
+  const [loading, setLoading] = useState(false);
+  //MODALS
+  const [HowCanIHelpModal, setHowCanIHelpModal] = useState(false);
+  const [DoModal, setDoModal] = useState(false);
+  const [DoNotModal, setDoNotModal] = useState(false);
+  const [AlwaysModal, setAlwaysModal] = useState(false);
+  useEffect(() => {
+    loadNationalHotlines();
+  }, []);
+
+  const retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('cache/how-can-i-helps');
+      if (value !== null) {
+        // We have data!!
+        const test = JSON.parse(value);
+        setHowCanIHelp(test.value.data);
+        //console.log(test.value.data);
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+  const loadNationalHotlines = async () => {
+    setLoading(true);
+    const response = await apiRoutes.getNationalHotlines;
+    setLoading(false);
+    response.data != null ? setHowCanIHelp(response.data.data) : retrieveData();
+    //setHowCanIHelp(response.data.data);
+  };
+
   return (
     <View style={customStyles.mainWrapper}>
       <Header navigation={navigation} />
       <ScrollView style={customStyles.innerWrapper}>
-        <View style={customStyles.headingWrapper}>
-          <CustomText style={customStyles.heading}>
-            NATIONAL HOTLINES
-          </CustomText>
+        <View style={styles.imageWrapper}>
+          <Image
+            style={styles.image}
+            source={require('../../assets/images/national_hotlines-01.jpg')}
+          />
         </View>
-        <View style={styles.card}>
-          <View style={customStyles.textWrapper}>
-            <View style={styles.modalHeadingWrapper}>
-              <CustomText style={customStyles.boldTxt}>
-                Bureau of Gender Affairs:
+        {howCanIHelp.map((item) => (
+          <View key={item.id} style={customStyles.textWrapper}>
+            <View style={styles.subheadingWrapper}>
+              <CustomText style={customStyles.heading}>
+                {item.attributes.title}
               </CustomText>
             </View>
-            <View style={styles.contactWrapper}>
-              <View style={styles.contactText}>
-                <CustomText style={styles.txt}>+876-553-0387 (M)</CustomText>
-              </View>
-              <View style={styles.contactButtonWrapper}>
-                <Pressable
-                  style={styles.callButton}
-                  onPress={() => Linking.openURL('tel:${8765530387}')}
-                >
-                  <MaterialCommunityIcons
-                    name='phone'
-                    size={12}
-                    color='#C1126B'
-                  />
-                  <CustomText style={styles.buttonText}> CALL</CustomText>
-                </Pressable>
-              </View>
-            </View>
-            <View style={styles.contactWrapper}>
-              <View style={styles.contactText}>
-                <CustomText style={styles.txt}>+876-553-0372 (F)</CustomText>
-              </View>
-              <View style={styles.contactButtonWrapper}>
-                <Pressable
-                  style={styles.callButton}
-                  onPress={() => Linking.openURL('tel:${8765530372}')}
-                >
-                  <MaterialCommunityIcons
-                    name='phone'
-                    size={12}
-                    color='#C1126B'
-                  />
-                  <CustomText style={styles.buttonText}> CALL</CustomText>
-                </Pressable>
-              </View>
-            </View>
+            <Markdown styles={markdownFonts}>
+              {item.attributes.body.substring(0, 110)}
+            </Markdown>
           </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={customStyles.textWrapper}>
-            <View style={styles.modalHeadingWrapper}>
-              <CustomText style={customStyles.boldTxt}>
-                Child Protection & Family Services Agency (CPFSA):
-              </CustomText>
-            </View>
-            <View style={styles.contactWrapper}>
-              <View style={styles.contactText}>
-                <CustomText style={styles.txt}>+888-776-8328</CustomText>
-              </View>
-              <View style={styles.contactButtonWrapper}>
-                <Pressable
-                  style={styles.callButton}
-                  onPress={() => Linking.openURL('tel:${8887768328}')}
-                >
-                  <MaterialCommunityIcons
-                    name='phone'
-                    size={12}
-                    color='#C1126B'
-                  />
-                  <CustomText style={styles.buttonText}> CALL</CustomText>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={styles.card}>
-          <View style={customStyles.textWrapper}>
-            <View style={styles.modalHeadingWrapper}>
-              <CustomText style={customStyles.boldTxt}>Woman Inc.</CustomText>
-            </View>
-            <View style={styles.contactWrapper}>
-              <View style={styles.contactText}>
-                <CustomText style={styles.txt}>+876-929-2997</CustomText>
-              </View>
-              <View style={styles.contactButtonWrapper}>
-                <Pressable
-                  style={styles.callButton}
-                  onPress={() => Linking.openURL('tel:${8769292997}')}
-                >
-                  <MaterialCommunityIcons
-                    name='phone'
-                    size={12}
-                    color='#C1126B'
-                  />
-                  <CustomText style={styles.buttonText}> CALL</CustomText>
-                </Pressable>
-              </View>
-            </View>
-          </View>
+        ))}
+        <View style={{ paddingHorizontal: 30 }}>
+          <Emergency />
         </View>
       </ScrollView>
       <Footer navigation={navigation} />
@@ -121,53 +87,31 @@ export const NationalHotlines = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  contactWrapper: {
-    flexDirection: 'row',
+  textWrapper: {
+    paddingHorizontal: 30,
   },
-  contactButtonWrapper: {
-    flex: 1,
-    justifyContent: 'center',
+  subheadingWrapper: {
+    marginVertical: 10,
+    paddingRight: 50,
   },
-  modalHeadingWrapper: {
-    borderBottomWidth: 2,
-    borderBottomColor: 'lightgrey',
-    marginBottom: 15,
+  imageWrapper: {
+    marginBottom: 10,
   },
-  contactText: {
-    flex: 2,
-    justifyContent: 'center',
+  image: {
+    width: '100%',
+    height: 130,
   },
-  modalWrapper: {
-    flex: 1,
-    backgroundColor: '#efefef',
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    paddingVertical: 10,
-    marginHorizontal: 10,
-    borderRadius: 5,
-  },
-  txt: {
-    fontSize: 22,
-    fontFamily: 'bebas-neue',
-    textAlign: 'justify',
-    color: '#C1126B',
-    marginBottom: 20,
-  },
-  callButton: {
-    borderWidth: 1,
-    borderColor: '#C1126B',
-    marginBottom: 20,
-    padding: 5,
-    borderRadius: 5,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#C1126B',
-    fontFamily: 'bebas-neue-bold',
-    fontSize: 19,
-    textAlign: 'center',
+  buttonWrapper: {
+    paddingHorizontal: 30,
+    marginBottom: 25,
   },
 });
+
+{
+  /* <View style={customStyles.listItem}>
+  <Text>{'\u2022'}</Text>
+  <CustomText style={customStyles.listText}>
+    <Text></Text>
+  </CustomText>
+</View>; */
+}

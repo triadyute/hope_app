@@ -4,6 +4,7 @@ import {
   ScrollView,
   Text,
   Image,
+  Linking,
   ActivityIndicator,
   StyleSheet,
   BackHandler,
@@ -71,7 +72,12 @@ export const HomePage = ({ navigation }) => {
           <CustomButton onPress={() => navigation.navigate('Welcome')}>
             <CustomText style={customStyles.buttonText}>CONTINUE</CustomText>
           </CustomButton>
-          <CustomButton onPress={() => BackHandler.exitApp()}>
+          <CustomButton
+            onPress={() => {
+              BackHandler.exitApp();
+              Linking.openURL('https://www.jamaica-gleaner.com');
+            }}
+          >
             <CustomText style={customStyles.buttonText}>EXIT APP</CustomText>
           </CustomButton>
           <Emergency />

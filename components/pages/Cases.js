@@ -25,10 +25,14 @@ export const Cases = ({ navigation }) => {
   const [howCanIHelp, setHowCanIHelp] = useState([]);
   const [loading, setLoading] = useState(false);
   //MODALS
-  const [HowCanIHelpModal, setHowCanIHelpModal] = useState(false);
-  const [DoModal, setDoModal] = useState(false);
-  const [DoNotModal, setDoNotModal] = useState(false);
-  const [AlwaysModal, setAlwaysModal] = useState(false);
+  const [Joy, setJoy] = useState(false);
+  const [David, setDavid] = useState(false);
+  const [Keith, setKeith] = useState(false);
+  const [Dahlia, setDahlia] = useState(false);
+  const [Carl, setCarl] = useState(false);
+  const [Pam, setPam] = useState(false);
+  const [Johnny, setJohnny] = useState(false);
+  const [Pat, setPat] = useState(false);
   useEffect(() => {
     loadHowCanIHelp();
   }, []);
@@ -66,6 +70,40 @@ export const Cases = ({ navigation }) => {
         </View>
         {howCanIHelp.map((item) => (
           <View key={item.id} style={customStyles.textWrapper}>
+            <Modal visible={eval(item.attributes.modalID)}>
+              <ScrollView style={customStyles.modalWrapper}>
+                <View style={{ paddingTop: 50, paddingHorizontal: 30 }}>
+                  <View style={styles.headingWrapper}>
+                    <View>
+                      <Image
+                        style={styles.icon}
+                        source={require('../../assets/images/female_1.png')}
+                      />
+                    </View>
+                    <View style={styles.nameWrapper}>
+                      <CustomText style={styles.personName}>
+                        {item.attributes.title}
+                      </CustomText>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.textWrapper}>
+                  <Markdown styles={markdownFonts}>
+                    {item.attributes.body}
+                  </Markdown>
+                </View>
+              </ScrollView>
+              <Pressable
+                onPress={() => {
+                  eval('set' + item.attributes.modalID + '(false)');
+                }}
+                style={customStyles.modalFooter}
+              >
+                <CustomText style={customStyles.modalFooterTxt}>
+                  Close
+                </CustomText>
+              </Pressable>
+            </Modal>
             <View style={styles.headingWrapper}>
               <View>
                 <Image
@@ -75,7 +113,7 @@ export const Cases = ({ navigation }) => {
               </View>
               <View style={styles.nameWrapper}>
                 <CustomText style={styles.personName}>
-                  {item.attributes.icon}
+                  {item.attributes.title}
                 </CustomText>
               </View>
             </View>
@@ -83,7 +121,11 @@ export const Cases = ({ navigation }) => {
               {item.attributes.body.substring(0, 110)}
             </Markdown>
             <View style={{ paddingBottom: 5 }}>
-              <CustomButton>
+              <CustomButton
+                onPress={() => {
+                  eval('set' + item.attributes.modalID + '(true)');
+                }}
+              >
                 <CustomText style={customStyles.buttonText}>
                   READ MORE
                 </CustomText>

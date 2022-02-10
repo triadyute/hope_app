@@ -15,6 +15,7 @@ const getKnowOurLaws = client.get('/know-our-laws');
 const getResources = client.get('/resources');
 const getSexualConsent = client.get('/sexual-consent');
 const getCases = client.get('/cases');
+const getNationalHotlines = client.get('/emergency-hotlines');
 
 export default {
   getAboutUs,
@@ -31,4 +32,5 @@ export default {
   getResources,
   getSexualConsent,
   getCases,
+  getNationalHotlines,
 };

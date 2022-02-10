@@ -92,7 +92,12 @@ export const SplashScreen = (props) => {
               <Text style={customStyles.buttonText}>GET STARTED</Text>
             </CustomText>
           </CustomButton>
-          <CustomButton onPress={() => BackHandler.exitApp()}>
+          <CustomButton
+            onPress={() => {
+              BackHandler.exitApp();
+              Linking.openURL('https://www.jamaica-gleaner.com');
+            }}
+          >
             <CustomText>
               <Text style={customStyles.buttonText}>EXIT APP</Text>
             </CustomText>

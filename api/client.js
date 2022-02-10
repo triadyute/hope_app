@@ -1,7 +1,7 @@
 import { create } from 'apisauce';
 import cache from '../utility/cache';
 const apiClient = create({
-  baseURL: 'http://192.168.100.192:1337/api',
+  baseURL: 'http://hope-jamaica.com:1337/api',
 });
 
 const get = apiClient.get;

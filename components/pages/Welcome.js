@@ -4,6 +4,7 @@ import {
   ScrollView,
   Text,
   Image,
+  Linking,
   StyleSheet,
   ActivityIndicator,
   BackHandler,

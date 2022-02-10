@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -12,11 +12,42 @@ import {
 } from 'react-native';
 import customStyles from '../styles/Styles';
 import CustomText from './CustomText';
-
+import markdownFonts from '../custom-components/markDownFonts';
+import Markdown from 'react-native-markdown-text';
+import apiRoutes from '../../api/routes';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const Footer = ({ navigation }) => {
   const [emergencyModal, setEmergenvyModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [nationalHotlines, setNationalHotlines] = useState([]);
+
+  useEffect(() => {
+    loadNationalHotlines();
+  }, []);
+  const retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('cache/emergency-hotlines');
+      if (value !== null) {
+        // We have data!!
+        const test = JSON.parse(value);
+        setNationalHotlines(test.value.data);
+        //console.log(test.value.data);
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  };
+
+  const loadNationalHotlines = async () => {
+    setLoading(true);
+    const response = await apiRoutes.getNationalHotlines;
+    setLoading(false);
+    response.data != null
+      ? setNationalHotlines(response.data.data)
+      : retrieveData();
+    //setHowCanIHelp(response.data.data);
+  };
 
   return (
     <View style={customStyles.footerWrapper}>
@@ -28,110 +59,25 @@ export const Footer = ({ navigation }) => {
                 EMERGENCY HOTLINES
               </CustomText>
             </View>
-            <View style={styles.card}>
-              <View style={customStyles.textWrapper}>
-                <View style={styles.modalHeadingWrapper}>
-                  <CustomText style={customStyles.boldTxt}>
-                    Bureau of Gender Affairs:
-                  </CustomText>
-                </View>
-                <View style={styles.contactWrapper}>
-                  <View style={styles.contactText}>
-                    <CustomText style={styles.txt}>
-                      +876-553-0387 (M)
+            {nationalHotlines.map((item) => (
+              <View key={item.id} style={styles.card}>
+                <View style={customStyles.textWrapper}>
+                  <View style={styles.modalHeadingWrapper}>
+                    <CustomText style={customStyles.boldTxt}>
+                      {item.attributes.title}
                     </CustomText>
                   </View>
-                  <View style={styles.contactButtonWrapper}>
-                    <Pressable
-                      style={styles.callButton}
-                      onPress={() => Linking.openURL('tel:${8765530387}')}
-                    >
-                      <MaterialCommunityIcons
-                        name='phone'
-                        size={12}
-                        color='#C1126B'
-                      />
-                      <CustomText style={styles.buttonText}> CALL</CustomText>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.contactWrapper}>
-                  <View style={styles.contactText}>
-                    <CustomText style={styles.txt}>
-                      +876-553-0372 (F)
-                    </CustomText>
-                  </View>
-                  <View style={styles.contactButtonWrapper}>
-                    <Pressable
-                      style={styles.callButton}
-                      onPress={() => Linking.openURL('tel:${8765530372}')}
-                    >
-                      <MaterialCommunityIcons
-                        name='phone'
-                        size={12}
-                        color='#C1126B'
-                      />
-                      <CustomText style={styles.buttonText}> CALL</CustomText>
-                    </Pressable>
+                  <View style={styles.contactWrapper}>
+                    <View style={styles.contactText}>
+                      <CustomText style={styles.txt}>
+                        {item.attributes.body}
+                      </CustomText>
+                    </View>
+                    <View style={styles.contactButtonWrapper}></View>
                   </View>
                 </View>
               </View>
-            </View>
-
-            <View style={styles.card}>
-              <View style={customStyles.textWrapper}>
-                <View style={styles.modalHeadingWrapper}>
-                  <CustomText style={customStyles.boldTxt}>
-                    Child Protection & Family Services Agency (CPFSA):
-                  </CustomText>
-                </View>
-                <View style={styles.contactWrapper}>
-                  <View style={styles.contactText}>
-                    <CustomText style={styles.txt}>+888-776-8328</CustomText>
-                  </View>
-                  <View style={styles.contactButtonWrapper}>
-                    <Pressable
-                      style={styles.callButton}
-                      onPress={() => Linking.openURL('tel:${8887768328}')}
-                    >
-                      <MaterialCommunityIcons
-                        name='phone'
-                        size={12}
-                        color='#C1126B'
-                      />
-                      <CustomText style={styles.buttonText}> CALL</CustomText>
-                    </Pressable>
-                  </View>
-                </View>
-              </View>
-            </View>
-            <View style={styles.card}>
-              <View style={customStyles.textWrapper}>
-                <View style={styles.modalHeadingWrapper}>
-                  <CustomText style={customStyles.boldTxt}>
-                    Woman Inc.
-                  </CustomText>
-                </View>
-                <View style={styles.contactWrapper}>
-                  <View style={styles.contactText}>
-                    <CustomText style={styles.txt}>+876-929-2997</CustomText>
-                  </View>
-                  <View style={styles.contactButtonWrapper}>
-                    <Pressable
-                      style={styles.callButton}
-                      onPress={() => Linking.openURL('tel:${8769292997}')}
-                    >
-                      <MaterialCommunityIcons
-                        name='phone'
-                        size={12}
-                        color='#C1126B'
-                      />
-                      <CustomText style={styles.buttonText}> CALL</CustomText>
-                    </Pressable>
-                  </View>
-                </View>
-              </View>
-            </View>
+            ))}
           </ScrollView>
         </View>
 
